@@ -57,3 +57,28 @@ if [[ $1 == *"-d"* ]]; then
         sed -i "${deleteNo}d" "$file"
     fi
 fi
+
+#!/bin/bash
+
+file="phonebook.txt"
+
+if [[ $1 == *"-5"* ]]; then
+    read -p "Enter First or Last Name or phone number of the record you want to edit: " search
+    found=$(grep "$search" "$file")
+
+    if [ -z "$found" ]; then
+        echo "No Item found"
+    else
+        echo "$found" | while read -r line; do
+            echo "$line"
+        done
+
+        read -p "Enter First Name: " fName
+        read -p "Enter Last Name: " lName
+        read -p "Enter phone number: " pNumber
+
+        sed -i "s/$search/$fName $lName $pNumber/g" "$file"
+
+        echo "Record updated successfully."
+    fi
+fi
