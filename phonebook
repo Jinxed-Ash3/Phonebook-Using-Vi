@@ -1,0 +1,70 @@
+vi phonebook
+
+file=database.txt
+i=0
+
+if ! [ -f "$file" ]; then #file not exists
+    touch database.txt
+fi 
+
+if [ -z $1 ];then
+	echo "-1 to view all contacts"
+	echo "-2 to search for phone record" 
+	echo "-3 to add a contact"
+	echo "-4 to delete a contact"
+fi
+
+if [[ $1 == *"-1"* ]] ;then
+  echo "Here are all your contacts"
+  cat file | while read line do
+  i = $i +1 
+  echo "$i $line"
+done 
+fi 
+
+if [[ $1 == *"-2"* ]] ;then
+	echo "Search a Record"
+	read -p "Enter First or Last Name or phone number : " search
+	found=$(grep $search $file)
+	if  [ -z "$found" ] ;then
+	echo "No Item found"
+	else 
+	grep $search $file | while read -r line ; do
+	i=$[ $i +1 ]
+    	echo "$i $line"
+	done
+	fi
+fi
+
+if [[ $1 == *"-3"* ]] ;then
+	echo "Create a new Record"
+	read -p "Enter First Name: " fName
+	read -p "Enter Last Name: " lName
+	read -p "Enter phone number: " pNumber
+	echo $fName $lName $pNumber >> database.txt
+fi
+
+if [[ $1 == *"-4"* ]] ;then
+	 echo "Search a Record"
+	read -p "Enter First or last Name or phone number of the record you wanna delete : " search
+	found=$(grep $search $file)
+	if  [ -z "$found" ] ;then
+	echo "No Item found"
+	else 
+	grep $search $file | while read -r line ; do
+	i=$[ $i +1 ]
+    	echo "$i $line"
+	done
+	read -p "Enter number you wanna delete: " deleteNo
+	i=0
+	grep $search $file | while read -r line ; do
+	i=$[ $i +1 ]
+	if [ $deleteNo -eq $i ] ;then
+	#echo  $line
+	echo "`sed  /"$line"/d  database.txt`" > database.txt
+
+	fi
+	done
+	
+	fi
+fi
