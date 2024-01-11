@@ -1,50 +1,51 @@
-vi phonebook
+file="database.txt"
 
-file=database.txt
-i=0
-
-if ! [ -f "$file" ]; then #file not exists
+if ! [ -f "$file" ]; then
     touch database.txt
-fi 
-
-if [ -z $1 ];then
-	echo "-1 to view all contacts"
-	echo "-2 to search for phone record" 
-	echo "-3 to add a contact"
-	echo "-4 to delete a contact"
 fi
 
-if [[ $1 == *"-1"* ]] ;then
-  echo "Here are all your contacts"
-  cat file | while read line do
-  i = $i +1 
-  echo "$i $line"
-done 
-fi 
-
-if [[ $1 == *"-2"* ]] ;then
-	echo "Search a Record"
-	read -p "Enter First or Last Name or phone number : " search
-	found=$(grep $search $file)
-	if  [ -z "$found" ] ;then
-	echo "No Item found"
-	else 
-	grep $search $file | while read -r line ; do
-	i=$[ $i +1 ]
-    	echo "$i $line"
-	done
-	fi
+if [ -z "$1" ]; then
+    echo "-1 to view all contacts"
+    echo "-2 to search for phone record"
+    echo "-3 to add a contact"
+    echo "-4 to delete a contact"
+    echo "-5 to update a contact"
 fi
 
-if [[ $1 == *"-3"* ]] ;then
-	echo "Create a new Record"
-	read -p "Enter First Name: " fName
-	read -p "Enter Last Name: " lName
-	read -p "Enter phone number: " pNumber
-	echo $fName $lName $pNumber >> database.txt
+if [[ $1 == *"-1"* ]]; then
+    echo "Here are all your contacts"
+    i=0
+    while read -r line; do
+        ((i++))
+        echo "$i $line"
+    done < "$file"
 fi
 
-if [[ $1 == *"-d"* ]]; then
+if [[ $1 == *"-2"* ]]; then
+    echo "Search a Record"
+    read -p "Enter First or Last Name or phone number : " search
+    found=$(grep "$search" "$file")
+    if [ -z "$found" ]; then
+        echo "No Item found"
+    else
+        i=0
+        echo "$found" | while read -r line; do
+            ((i++))
+            echo "$i $line"
+        done
+    fi
+fi
+
+if [[ $1 == *"-3"* ]]; then
+    echo "Create a new Record"
+    read -p "Enter First Name: " fName
+    read -p "Enter Last Name: " lName
+    read -p "Enter phone number: " pNumber
+    echo "$fName $lName $pNumber" >> "$file"
+    echo "Contact added successfully."
+fi
+
+if [[ $1 == *"-4"* ]]; then
     read -p "Enter First or Last Name or phone number of the contact you want to delete: " search
     found=$(grep "$search" "$file")
     if [ -z "$found" ]; then
@@ -55,15 +56,12 @@ if [[ $1 == *"-d"* ]]; then
         done
         read -p "Enter the line number you want to delete: " deleteNo
         sed -i "${deleteNo}d" "$file"
+        echo "Contact deleted successfully."
     fi
 fi
 
-#!/bin/bash
-
-file="phonebook.txt"
-
 if [[ $1 == *"-5"* ]]; then
-    read -p "Enter First or Last Name or phone number of the record you want to edit: " search
+    read -p "Enter First or Last Name or phone number of the record you want to update: " search
     found=$(grep "$search" "$file")
 
     if [ -z "$found" ]; then
@@ -82,3 +80,4 @@ if [[ $1 == *"-5"* ]]; then
         echo "Record updated successfully."
     fi
 fi
+
